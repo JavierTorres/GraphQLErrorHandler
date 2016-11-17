@@ -1,4 +1,4 @@
-# GraphQL with http response body containing extra field
+# GraphQL Error Handler
 
 This is just a simple project to modify the behaviour of the HTTP Response body of GraphQL specification (see below)
 to add an extra field per each error to contain a code. That should be compatible with any GraphQL client as
