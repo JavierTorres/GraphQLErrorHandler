@@ -17,6 +17,12 @@ import java.util.stream.Collectors;
 public class GraphQLHttpResponse {
     private static final String ERRORS = "errors";
     private static final String DATA = "data";
+    private static final String CODE = "code";
+    private static final String CODE_FROM = CODE + "=";
+    private static final String CODE_TO = "}";
+    private static final String MESSAGE = "message";
+    private static final String MESSAGE_FROM = MESSAGE + "='";
+    private static final String MESSAGE_TO = "',";
 
     private static final Logger log = LoggerFactory.getLogger(GraphQLHttpResponse.class);
 
@@ -33,13 +39,13 @@ public class GraphQLHttpResponse {
 
                         errorType = Optional.of(e.getErrorType());
 
-                        if (e.getMessage().contains("code=") && e.getMessage().contains("message=")) {
-                            error.put("code", e.getMessage().substring(e.getMessage().indexOf("code=") + "code=".length(), e.getMessage().indexOf("}")));
-                            error.put("message", e.getMessage().substring(e.getMessage().indexOf("message='") + "message='".length(), e.getMessage().indexOf("',")));
+                        if (e.getMessage().contains(CODE_FROM) && e.getMessage().contains(MESSAGE_FROM)) {
+                            error.put(CODE, parseMessageFromTo(e.getMessage(), CODE_FROM, CODE_TO));
+                            error.put(MESSAGE, parseMessageFromTo(e.getMessage(), MESSAGE_FROM, MESSAGE_TO));
 
                         } else {
                             // Not containing error code
-                            error.put("message", e.getMessage());
+                            error.put(MESSAGE, e.getMessage());
                         }
 
                         return error;
@@ -51,6 +57,10 @@ public class GraphQLHttpResponse {
         }
 
         response.put(DATA, executionResult.getData());
+    }
+
+    private String parseMessageFromTo(String m, String from, String to) {
+        return m.substring(m.indexOf(from) + from.length(), m.indexOf(to));
     }
 
     public HttpStatus getHttpStatus() {
