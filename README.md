@@ -29,6 +29,8 @@ If there is an error the HTTP Header Status would be:
 * java 8
 * spring Boot 1.4.2.RELEASE
 * graphql-java 2.2.0
+* Scala 2.11.8
+* Scalatest 2.11
 
 ### Links
 [Facebook GraphQL Error specification](http://facebook.github.io/graphql/#sec-Errors)
