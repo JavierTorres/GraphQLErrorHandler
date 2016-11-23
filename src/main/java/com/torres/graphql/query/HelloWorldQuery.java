@@ -14,8 +14,14 @@ import static graphql.Scalars.GraphQLString;
  */
 @Component
 public class HelloWorldQuery {
+
     @Autowired
     HelloWorldFetcher fetcher;
+    /*
+    @Autowired
+    public HelloWorldQuery(HelloWorldFetcher fetcher) {
+        this.fetcher = fetcher;
+    }*/
 
     public GraphQLObjectType getQueryType() {
         return newObject()

@@ -14,6 +14,11 @@ public class HelloWorldSchema implements Schema {
 
     @Autowired
     HelloWorldQuery query;
+/*
+    @Autowired
+    public HelloWorldSchema(HelloWorldQuery query) {
+        this.query = query;
+    }*/
 
     @Override
     public GraphQL toGraphQL() {

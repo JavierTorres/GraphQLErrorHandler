@@ -1,7 +1,8 @@
-package com.torres.graphql;
+package com.torres.graphql.controller;
 
 import com.torres.graphql.fetcher.HelloWorldFetcher;
 import com.torres.graphql.model.GraphQLServerRequest;
+import com.torres.graphql.query.HelloWorldQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +28,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 /**
  * Created by javierbracerotorres on 15/11/2016.
  */
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class GraphQLControllerTest {
@@ -36,10 +36,13 @@ public class GraphQLControllerTest {
 
     private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
-    private MediaType contentType = new MediaType("application", "hal+json");
+    private MediaType contentType = MediaType.APPLICATION_JSON;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    private HelloWorldQuery helloWorldQuery;
 
     @Autowired
     private HelloWorldFetcher helloWorldFetcher;

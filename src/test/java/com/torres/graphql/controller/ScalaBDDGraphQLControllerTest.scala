@@ -1,39 +1,23 @@
-package com.torres.graphql
+package com.torres.graphql.controller
 
 import com.torres.graphql.fetcher.HelloWorldFetcher
-import org.junit.runner.RunWith
-import org.junit.{Before, Test}
-import org.scalatest.junit.JUnitSuite
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.web.WebAppConfiguration
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.{content, status}
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.context.WebApplicationContext
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders._
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers._
 
-@RunWith(classOf[SpringJUnit4ClassRunner])
+/**
+ * Created by javierbracerotorres on 22/11/2016.
+ */
 @WebAppConfiguration
-@SpringBootTest
-class ScalaGraphQLControllerTest extends JUnitSuite {
-  @Autowired
-  val webApplicationContext: WebApplicationContext = null
+class ScalaBDDGraphQLControllerTest extends ControllerTest(classOf[GraphQLController]) {
 
   @Autowired
   val helloWorldFetcher: HelloWorldFetcher = null
 
-  var mockMvc: MockMvc = _
+  it should "return World when no errors" in {
 
-  @Before
-  def setup():Unit = {
-    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build()
-  }
-
-  @Test
-  def testGraphQLOk():Unit = {
     val request =
       """
       {
@@ -42,6 +26,10 @@ class ScalaGraphQLControllerTest extends JUnitSuite {
           "variables":{}
       }
       """
+
+    Given("the request body: " + request)
+    When("calling the url /graphql")
+    helloWorldFetcher.setConnectionError(false)
 
     val response =
       """
@@ -52,17 +40,18 @@ class ScalaGraphQLControllerTest extends JUnitSuite {
           }
       }
       """
+    Then("the response must be " + response)
 
-    helloWorldFetcher.setConnectionError(false)
-    mockMvc.perform(post("/graphql")
-      .contentType(MediaType.APPLICATION_JSON_UTF8)
+    mvc.perform(post("/graphql")
+      .contentType(MediaType.APPLICATION_JSON)
       .content(request))
       .andExpect(status().isOk())
       .andExpect(content().json(response));
+
   }
 
-  @Test
-  def testGraphQLWithFetchingErrors():Unit = {
+  it should "return an error when fetching error" in {
+
     val request =
       """
       {
@@ -71,6 +60,10 @@ class ScalaGraphQLControllerTest extends JUnitSuite {
           "variables":{}
       }
       """
+
+    Given("the request body: " + request)
+    When("calling the url /graphql and there is a fetching error")
+    helloWorldFetcher.setConnectionError(true)
 
     val response =
       """
@@ -82,17 +75,18 @@ class ScalaGraphQLControllerTest extends JUnitSuite {
         "errors":[{"code":"301", "message": "No connection"}]
       }
       """
-    helloWorldFetcher.setConnectionError(true)
+    Then("the response must be " + response)
 
-    mockMvc.perform(post("/graphql")
+    mvc.perform(post("/graphql")
       .contentType(MediaType.APPLICATION_JSON_UTF8)
       .content(request))
       .andExpect(status().isInternalServerError)
       .andExpect(content().json(response));
+
   }
 
-  @Test
-  def testGraphQLWithInvalidBody():Unit = {
+  it should "return an error when the body request is invalid" in {
+
     val request =
       """
       {
@@ -101,6 +95,10 @@ class ScalaGraphQLControllerTest extends JUnitSuite {
           "variables":{}
       }
       """
+
+    Given("the request body: " + request)
+    When("calling the url /graphql")
+    helloWorldFetcher.setConnectionError(false)
 
     val response =
       """
@@ -112,12 +110,13 @@ class ScalaGraphQLControllerTest extends JUnitSuite {
         ]
       }
       """
-    helloWorldFetcher.setConnectionError(true)
+    Then("the response must contain two validations errors" + response)
 
-    mockMvc.perform(post("/graphql")
+    mvc.perform(post("/graphql")
       .contentType(MediaType.APPLICATION_JSON_UTF8)
       .content(request))
       .andExpect(status().isBadRequest)
       .andExpect(content().json(response));
+
   }
 }

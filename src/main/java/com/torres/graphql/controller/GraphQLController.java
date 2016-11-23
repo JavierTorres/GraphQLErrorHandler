@@ -29,7 +29,15 @@ public class GraphQLController {
 
     private static final Logger log = LoggerFactory.getLogger(GraphQLController.class);
 
-    @RequestMapping(value = "/graphql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    /*
+    @Autowired
+    public GraphQLController(HelloWorldSchema helloWorldSchema, SchemaExecutor schemaExecutor) {
+        this.helloWorldSchema = helloWorldSchema;
+        this.schemaExecutor = schemaExecutor;
+    }*/
+
+    @RequestMapping(value = "/graphql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> graphql(@RequestBody Map body) {
         String query = (String) body.get("query");
         Map<String, Object> variables = (Map<String, Object>) body.get("variables");
